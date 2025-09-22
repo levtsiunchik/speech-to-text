@@ -1,36 +1,36 @@
-import {
-  RecordingRef,
-  startRecording,
-  stopRecordingToBytes,
-} from '@/src/shared/lib/audio'
-import { useState } from 'react'
+import type { RecordingRef } from '@/shared/lib/audio'
+import { startRecording, stopRecordingToBytes } from '@/src/shared/lib/audio'
+import { useCallback, useRef, useState } from 'react'
 import { runWhisper } from '../api/whisper'
 
 export const useRecognize = () => {
-  const [recording, setRecording] = useState<RecordingRef | null>(null)
+  const recRef = useRef<RecordingRef | null>(null)
+  const [isRecording, setIsRecording] = useState(false)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const start = async () => {
+  const start = useCallback(async () => {
     const rec = await startRecording()
-    setRecording(rec)
+    recRef.current = rec
+    setIsRecording(true)
     setText('')
-  }
+  }, [])
 
-  const stopAndRecognize = async () => {
-    if (!recording) return
+  const stopAndRecognize = useCallback(async () => {
+    if (!recRef.current) return
     setLoading(true)
     try {
-      const bytes = await stopRecordingToBytes(recording)
+      const bytes = await stopRecordingToBytes(recRef.current)
+      recRef.current = null
       const result = await runWhisper(bytes)
       setText(result.text || '(no result)')
     } catch (e: any) {
       setText('Error: ' + e.message)
     } finally {
-      setRecording(null)
+      setIsRecording(false)
       setLoading(false)
     }
-  }
+  }, [])
 
-  return { start, stopAndRecognize, recording, text, loading }
+  return { start, stopAndRecognize, isRecording, text, loading }
 }

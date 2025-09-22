@@ -3,9 +3,9 @@ import { StyleSheet, TextInput, View } from 'react-native'
 import { useRecognize } from '../hooks/useRecognize'
 
 type Props = Pick<ReturnType<typeof useRecognize>, 'text'>
-const placeholderText = `Transcription will appear here...`
+const placeholderText = 'Transcription will appear here...'
 
-export const RecognizeOutput: React.FC<Props> = ({ text }) => (
+export const RecognizeOutput = React.memo<Props>(({ text }) => (
   <View style={styles.container}>
     <TextInput
       style={styles.textArea}
@@ -16,14 +16,10 @@ export const RecognizeOutput: React.FC<Props> = ({ text }) => (
       multiline
     />
   </View>
-)
+))
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 24,
-    width: '100%',
-    paddingHorizontal: 16,
-  },
+  container: { marginTop: 24, width: '100%', paddingHorizontal: 16 },
   textArea: {
     width: '100%',
     minHeight: 120,
