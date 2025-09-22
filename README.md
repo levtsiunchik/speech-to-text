@@ -1,8 +1,17 @@
-# Welcome to your Expo app 👋
+# Speech-to-Text Demo (Expo + Cloudflare Whisper)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A demo app built with **Expo + React Native** that records speech and converts it into text using **Cloudflare Workers AI (Whisper)**.
 
-## Get started
+## Features
+
+- Record audio from the device microphone (via [`expo-audio`](https://docs.expo.dev/versions/latest/sdk/audio/))
+- Send binary audio data to the **Cloudflare Whisper API**
+- Receive transcription and display the result
+- Settings screen to enter **Account ID** and **API Token**
+- Credentials are stored locally using [`expo-secure-store`](https://docs.expo.dev/versions/latest/sdk/securestore/)
+- Supports update and delete
+
+## Getting started
 
 1. Install dependencies
 
@@ -23,18 +32,11 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Learn more
+## Usage
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Go to the Settings tab
+- Enter your Cloudflare Account ID and API Token
+- Tap "Save"
+- Switch to the Recognize tab and start recording
