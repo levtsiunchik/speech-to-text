@@ -1,36 +1,60 @@
-import type { RecordingRef } from '@/shared/lib/audio'
-import { startRecording, stopRecordingToBytes } from '@/src/shared/lib/audio'
-import { useCallback, useRef, useState } from 'react'
-import { runWhisper } from '../api/whisper'
+import { uriToBytes } from "@/src/shared/lib/file";
+import {
+  AudioModule,
+  RecordingPresets,
+  setAudioModeAsync,
+  useAudioRecorder,
+  useAudioRecorderState,
+} from "expo-audio";
+import { useCallback, useEffect, useState } from "react";
+import { runWhisper } from "../api/whisper";
 
 export const useRecognize = () => {
-  const recRef = useRef<RecordingRef | null>(null)
-  const [isRecording, setIsRecording] = useState(false)
-  const [text, setText] = useState('')
-  const [loading, setLoading] = useState(false)
+  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const state = useAudioRecorderState(recorder);
+
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const permissions = await AudioModule.requestRecordingPermissionsAsync();
+      if (!permissions.granted) throw new Error("Microphone permission denied");
+      await setAudioModeAsync({
+        allowsRecording: true,
+        playsInSilentMode: true,
+      });
+    })();
+  }, []);
 
   const start = useCallback(async () => {
-    const rec = await startRecording()
-    recRef.current = rec
-    setIsRecording(true)
-    setText('')
-  }, [])
+    setText("");
+    await recorder.prepareToRecordAsync();
+    recorder.record();
+  }, [recorder]);
 
   const stopAndRecognize = useCallback(async () => {
-    if (!recRef.current) return
-    setLoading(true)
+    if (!state.isRecording) return;
+    setLoading(true);
     try {
-      const bytes = await stopRecordingToBytes(recRef.current)
-      recRef.current = null
-      const result = await runWhisper(bytes)
-      setText(result.text || '(no result)')
+      await recorder.stop();
+      const uri = state.url || recorder.uri;
+      if (!uri) throw new Error("No recording URI");
+      const bytes = await uriToBytes(uri);
+      const result = await runWhisper(bytes);
+      setText(result.text || "(no text)");
     } catch (e: any) {
-      setText('Error: ' + e.message)
+      setText("Error: " + (e?.message ?? String(e)));
     } finally {
-      setIsRecording(false)
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, [recorder, state.isRecording, state.url]);
 
-  return { start, stopAndRecognize, isRecording, text, loading }
-}
+  return {
+    start,
+    stopAndRecognize,
+    isRecording: state.isRecording,
+    text,
+    loading,
+  };
+};
