@@ -4,12 +4,11 @@ import "react-native-reanimated";
 
 export default function RootLayout() {
   return (
-    <Stack>
+    <>
       <StatusBar style="auto" />
-      <Stack.Screen
-        name="index"
-        options={{ headerShown: false }}
-      />
-    </Stack>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+    </>
   );
 }
