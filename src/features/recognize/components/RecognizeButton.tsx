@@ -1,13 +1,13 @@
-import React from 'react'
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
-import { useRecognize } from '../hooks/useRecognize'
+import React from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
+import { useRecognize } from "../hooks/useRecognize";
 
-type Props = ReturnType<typeof useRecognize>
+type Props = ReturnType<typeof useRecognize>;
 
 export const RecognizeButton = React.memo<Props>(
-  ({ start, stopAndRecognize, isRecording, loading }) => {
-    const handlePress = isRecording ? stopAndRecognize : start
-    const label = isRecording ? 'Stop & Recognize' : 'Record Audio'
+  ({ start, stopAndRecognize, isRecording, loading, error }) => {
+    const handlePress = isRecording ? stopAndRecognize : start;
+    const label = isRecording ? "Stop & Recognize" : "Record Audio";
     return (
       <Pressable
         style={({ pressed }) => [
@@ -24,21 +24,21 @@ export const RecognizeButton = React.memo<Props>(
           <Text style={styles.label}>{label}</Text>
         )}
       </Pressable>
-    )
-  },
-)
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: 200,
   },
-  buttonRecord: { backgroundColor: '#007AFF' },
-  buttonStop: { backgroundColor: '#FF3B30' },
+  buttonRecord: { backgroundColor: "#007AFF" },
+  buttonStop: { backgroundColor: "#FF3B30" },
   buttonPressed: { opacity: 0.8, transform: [{ scale: 0.98 }] },
-  label: { color: '#fff', fontSize: 16, fontWeight: '600' },
-})
+  label: { color: "#fff", fontSize: 16, fontWeight: "600" },
+});

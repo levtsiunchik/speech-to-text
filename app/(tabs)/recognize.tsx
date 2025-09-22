@@ -1,4 +1,5 @@
 import { RecognizeButton } from "@/src/features/recognize/components/RecognizeButton";
+import { RecognizeError } from "@/src/features/recognize/components/RecognizeError";
 import { RecognizeOutput } from "@/src/features/recognize/components/RecognizeOutput";
 import { useRecognize } from "@/src/features/recognize/hooks/useRecognize";
 import React from "react";
@@ -11,6 +12,7 @@ const RecognizeTextScreen: React.FC = () => {
     <View style={styles.container}>
       <RecognizeButton {...recognize} />
       <RecognizeOutput text={recognize.text} />
+      <RecognizeError error={recognize.error} />
     </View>
   );
 };

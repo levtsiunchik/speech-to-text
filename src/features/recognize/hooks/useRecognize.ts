@@ -1,4 +1,5 @@
 import { uriToBytes } from "@/src/shared/lib/file";
+import { getErrorMessage } from "@/src/shared/lib/str";
 import {
   AudioModule,
   RecordingPresets,
@@ -15,6 +16,7 @@ export const useRecognize = () => {
 
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -29,6 +31,7 @@ export const useRecognize = () => {
 
   const start = useCallback(async () => {
     setText("");
+    setError(null);
     await recorder.prepareToRecordAsync();
     recorder.record();
   }, [recorder]);
@@ -44,7 +47,7 @@ export const useRecognize = () => {
       const result = await runWhisper(bytes);
       setText(result.text || "(no text)");
     } catch (e: any) {
-      setText("Error: " + (e?.message ?? String(e)));
+      setError(getErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -56,5 +59,6 @@ export const useRecognize = () => {
     isRecording: state.isRecording,
     text,
     loading,
+    error,
   };
 };
